@@ -130,7 +130,7 @@ func TestCertificationRender(t *testing.T) {
 		if err != nil {
 			return err
 		}
-		workflows, err := renderCertification(cert, "")
+		workflows, err := renderCertification(cert, "", "")
 		if err != nil {
 			return err
 		}
@@ -213,7 +213,7 @@ func TestCertificationRenderErrors(t *testing.T) {
 		if readErr != nil {
 			err = readErr
 		} else {
-			_, err = renderCertification(cert, "")
+			_, err = renderCertification(cert, "", "")
 		}
 
 		type result struct {
@@ -395,8 +395,7 @@ func TestPlatformToProviderID(t *testing.T) {
 // an invalid name must fail with the full list of valid names, and every name
 // platform detection can return must be accepted. For accepted platforms the
 // case also records what detection reports for the synthetic render node,
-// which is what override matching actually sees (nscale, for example, is only
-// detected when the node carries the nscale.com/rdmashare allocatable).
+// which is what override matching actually sees.
 func TestRenderPlatformFlag(t *testing.T) {
 	p := testutil.TestCaseParser{
 		Subdir:         "render-platform-flag",
@@ -421,7 +420,7 @@ func TestRenderPlatformFlag(t *testing.T) {
 
 		configFlags := kubeconfig.NewConfigFlags(true)
 		*configFlags.Namespace = defaultKubeNamespace
-		renderErr := runCertificationRender(certPath, "yaml", false, configFlags, cfg.Platform)
+		renderErr := runCertificationRender(certPath, "yaml", false, configFlags, cfg.Platform, "")
 
 		type result struct {
 			Error            string `json:"error"`
@@ -431,7 +430,7 @@ func TestRenderPlatformFlag(t *testing.T) {
 		if renderErr != nil {
 			r.Error = renderErr.Error()
 		} else if cfg.Platform != "" {
-			node := syntheticRenderNode(cfg.Platform, map[string]string{})
+			node := syntheticRenderNode(cfg.Platform, map[string]string{}, "")
 			r.DetectedPlatform = controller.DetectPlatform([]corev1.Node{node})
 		}
 

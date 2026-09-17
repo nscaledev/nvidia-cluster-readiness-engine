@@ -41,7 +41,7 @@ func TestRenderPlatformFlag(t *testing.T) {
 			}
 		}
 
-		renderErr := runWorkloadRunRender(runPath, "yaml", cfg.Platform)
+		renderErr := runWorkloadRunRender(runPath, "yaml", cfg.Platform, "")
 
 		type result struct {
 			Error string `json:"error"`

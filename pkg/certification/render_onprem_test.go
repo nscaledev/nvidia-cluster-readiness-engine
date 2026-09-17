@@ -91,11 +91,11 @@ func TestCertificationRenderOnPrem(t *testing.T) {
 		if err != nil {
 			return err
 		}
-		workflows, err := renderCertification(cert, cfg.Platform)
+		workflows, err := renderCertification(cert, cfg.Platform, "")
 		if err != nil {
 			return err
 		}
-		if err := resolveWorkflowsOffline(cert, workflows, cfg.Platform); err != nil {
+		if err := resolveWorkflowsOffline(cert, workflows, cfg.Platform, ""); err != nil {
 			return err
 		}
 
