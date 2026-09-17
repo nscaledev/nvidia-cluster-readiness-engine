@@ -868,9 +868,18 @@ func buildConfigFromFlags(
 		},
 		Spec: nvcrev1alpha1.CertificationSpec{
 			Target: nvcrev1alpha1.TargetSpec{
+				// gpu.present alone, not gpu.product: this selector is
+				// persisted and drives every future reconcile's node
+				// discovery, so baking in the value discovered just above
+				// would tie that discovery to whatever a node happened to
+				// report right now. A platform whose GPUs carry no such
+				// label at all (nscale's DRA-claimed GPUs, which have no
+				// device plugin/GFD to write it) would then never match
+				// again. DiscoverGPUNodes already required every discovered
+				// node to report the same product, so gpu.present alone
+				// reselects the identical homogeneous set.
 				NodeSelector: map[string]string{
 					"nvidia.com/gpu.present": "true",
-					"nvidia.com/gpu.product": gpuProduct,
 				},
 			},
 			Categories: cats,

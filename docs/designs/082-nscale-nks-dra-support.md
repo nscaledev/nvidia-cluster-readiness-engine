@@ -245,6 +245,26 @@ Once that's confirmed, implementation follows the shape ADR-075 and ADR-058 esta
   GPU-request removal moves from the base entry into every platform-specific fragment that
   needs it, which is a materially larger diff than assumed here; that outcome would be reported
   back before the catalog fragments are written, not discovered after.
+- **A pre-existing latent bug, exposed by nscale but not specific to it, gets fixed as part of
+  this work and widens the diff beyond nscale's own files.** `buildConfigFromFlags`
+  (`nvcrectl certification run --category`) persists the GPU product it discovers at creation
+  time directly into the Certification's `spec.target.nodeSelector`, alongside
+  `nvidia.com/gpu.present`. That selector drives every future reconcile's node discovery, so
+  baking in a point-in-time detected value ties all future discovery to whatever a node
+  happened to report at creation. On every platform shipped before nscale this was silently
+  safe, because the value written was always true of the real nodes. nscale is the platform
+  where it stops being safe outright: its GPUs are DRA-claimed with no device plugin/GFD to
+  ever write `nvidia.com/gpu.product`, so a Certification created against a live nscale cluster
+  would persist a selector its own nodes can never satisfy again. The fix drops
+  `nvidia.com/gpu.product` from the persisted selector, keeping only `nvidia.com/gpu.present`;
+  `DiscoverGPUNodes` already requires every discovered node to report the same product before
+  reaching this code, so `gpu.present` alone reselects the identical homogeneous set on every
+  platform. Because `buildConfigFromFlags` is the one code path every platform's
+  `certification run --category` goes through, this fix changes the persisted `nodeSelector`
+  shape uniformly, not just for nscale — every existing UAT fixture that asserts a
+  `Certification`'s full `nodeSelector` (one per platform, via
+  `test/uat/testdata/*/*/nccl/expected_certification.yaml`) loses its `nvidia.com/gpu.product`
+  line as a direct consequence, independent of anything else this ADR changes.
 
 ## Alternatives Considered
 
