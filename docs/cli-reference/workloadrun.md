@@ -67,6 +67,7 @@ nvcrectl workloadrun render [flags] <workloadrun.yaml>
 | Flag | Default | Description |
 |------|---------|-------------|
 | `--platform` | auto | Override platform detection (`aws`, `gcp`, `azure`, `oci`, `onprem`, `togetherai`, `mistral`, `forge`, `nscale`) |
+| `--gpu-arch` | none | GPU architecture, used when `target.nodeSelector` has no `nvidia.com/gpu.product` label (e.g. platform `nscale`). Wins over the `nodeSelector`-derived value when set; ignored under `--dry-run`, which always reads real nodes. |
 | `--dry-run` | `false` | Connect to cluster, discover real nodes, and render with actual platform/GPU detection |
 | `--output` | `yaml` | Output format: `yaml` or `json` |
 

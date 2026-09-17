@@ -76,6 +76,7 @@ nvcrectl certification render [flags] <cert-file>
 | Flag | Default | Description |
 |------|---------|-------------|
 | `--platform` | auto | Override platform detection (`aws`, `gcp`, `azure`, `oci`, `onprem`, `togetherai`, `mistral`, `forge`, `nscale`) |
+| `--gpu-arch` | none | GPU architecture, used when the target `nodeSelector` has no `nvidia.com/gpu.product` label (e.g. platform `nscale`, which carries no such label on real nodes). Does not affect live GPU-architecture detection under `--dry-run`, which always reads real nodes. |
 | `--dry-run` | `false` | Validate against the live API server without creating resources |
 | `--output` | `yaml` | Output format: `yaml` or `json` |
 
